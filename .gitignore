@@ -1,0 +1,20 @@
+# D / dub
+backend/.dub/
+backend/build/
+backend/data/
+backend/*-test-*
+
+# Node
+node_modules/
+approuter/resources/
+frontend/dist/
+
+# local secrets - never commit
+approuter/default-env.json
+backend/config/local.*
+.env
+
+# MTA
+mta_archives/
+.mta/
+*.mtar

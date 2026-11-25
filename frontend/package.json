@@ -1,0 +1,17 @@
+{
+  "name": "ecm-frontend",
+  "version": "2.0.0",
+  "description": "SAP Fiori 3 / OpenUI5 frontend of the multi-tenant ECM (JWT login)",
+  "private": true,
+  "scripts": {
+    "start": "ui5 serve --port 8081 --open index.html",
+    "test": "ui5 serve --port 8081 --open test/testsuite.qunit.html",
+    "build": "ui5 build --clean-dest --dest dist",
+    "lint": "ui5lint"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^4.0.0",
+    "@ui5/linter": "^1.0.0",
+    "ui5-middleware-simpleproxy": "^3.0.0"
+  }
+}

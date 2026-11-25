@@ -1,0 +1,83 @@
+_schema-version: "3.2"
+ID: uim-ecm
+version: 2.0.0
+description: Multi-tenant ECM - vibe.d backend (OData v4, JWT), SAP Fiori 3 / OpenUI5 frontend, approuter (XSUAA)
+
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  # ---------------------------------------------------------------- backend (D / vibe.d)
+  - name: ecm-backend
+    type: custom
+    path: backend
+    build-parameters:
+      builder: custom
+      commands:
+        - dub build -b release --compiler=ldc2
+      build-result: .
+      ignore: ["source/", "tests/", ".dub/", "data/"]
+    parameters:
+      buildpack: binary_buildpack
+      command: ./build/ecm-backend
+      memory: 1G
+      disk-quota: 2G
+      health-check-type: http
+      health-check-http-endpoint: /healthz
+    properties:
+      ECM_AUTH_MODE: hybrid          # XSUAA via approuter + local JWT login
+      ECM_LOG_LEVEL: info
+      ECM_CONFIG: ./config/default.json
+      # ECM_JWT_SECRET / ECM_ADMIN_PASSWORD / ECM_PLATFORM_ADMIN_PASSWORD: set via 'cf set-env' or a
+      # user-provided service tagged "ecm-config" (never commit secrets here)
+    requires:
+      - name: ecm-uaa
+    provides:
+      - name: ecm-backend-api
+        properties:
+          url: ${default-url}
+
+  # ---------------------------------------------------------------- frontend (static OpenUI5 app)
+  - name: ecm-frontend
+    type: custom
+    path: frontend
+    build-parameters:
+      builder: custom
+      commands: []
+      build-result: .
+      ignore: ["node_modules/", "test/", "localService/", "nginx/", "Dockerfile"]
+      supported-platforms: []
+
+  # ---------------------------------------------------------------- approuter (single entry point)
+  - name: ecm-approuter
+    type: approuter.nodejs
+    path: approuter
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+    build-parameters:
+      ignore: ["default-env.json", "node_modules/"]
+      requires:
+        - name: ecm-frontend
+          artifacts: ["."]
+          target-path: resources/
+    requires:
+      - name: ecm-uaa
+      - name: ecm-backend-api
+        group: destinations
+        properties:
+          name: ecm-backend
+          url: ~{url}
+          forwardAuthToken: true
+          timeout: 300000
+
+resources:
+  - name: ecm-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: approuter/xs-security.json
+      config:
+        xsappname: ecm-${space}
+        tenant-mode: dedicated

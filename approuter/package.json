@@ -1,0 +1,9 @@
+{
+  "name": "ecm-approuter",
+  "version": "2.0.0",
+  "description": "Approuter: single entry point on SAP BTP (XSUAA login, routing to ecm-backend, static Fiori app)",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node node_modules/@sap/approuter/approuter.js" },
+  "dependencies": { "@sap/approuter": "^20.0.0" }
+}

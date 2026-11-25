@@ -1,0 +1,22 @@
+# cf push -f deploy/cloudfoundry/manifest.yml   (needs Docker support enabled on the foundation)
+applications:
+  - name: ecm-backend
+    docker: { image: REGISTRY/ecm-backend:1.0.0 }
+    instances: 1
+    memory: 1G
+    health-check-type: http
+    health-check-http-endpoint: /healthz
+    env:
+      ECM_DATA_DIR: /data   # ephemeral; bind a volume service or swap in a DB adapter for persistence
+      # Set secrets outside the manifest:
+      #   cf set-env ecm-backend ECM_JWT_SECRET '<random, >= 32 chars>'
+      #   cf set-env ecm-backend ECM_ADMIN_PASSWORD '<initial tenant admin password>'
+      #   cf set-env ecm-backend ECM_PLATFORM_ADMIN_PASSWORD '<initial platform admin password>'
+  - name: ecm-frontend
+    docker: { image: REGISTRY/ecm-frontend:1.0.0 }
+    instances: 3
+    memory: 128M
+    health-check-type: http
+    health-check-http-endpoint: /healthz
+    env:
+      BACKEND_URL: https://ecm-backend.cfapps.example.com

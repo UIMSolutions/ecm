@@ -1,0 +1,44 @@
+<mvc:View controllerName="uim.ecm.controller.Login" height="100%"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+	<Page showHeader="false" enableScrolling="true" class="ecmLoginPage">
+		<FlexBox height="100%" alignItems="Center" justifyContent="Center" direction="Column">
+			<Panel width="24rem" class="sapUiResponsiveMargin" backgroundDesign="Solid">
+				<VBox class="sapUiSmallMargin">
+					<HBox alignItems="Center" class="sapUiSmallMarginBottom">
+						<core:Icon src="sap-icon://documents" size="2rem" class="sapUiSmallMarginEnd" color="Default"/>
+						<VBox>
+							<Title text="{i18n>appTitle}" level="H1" titleStyle="H3" wrapping="true"/>
+							<Text text="{i18n>signInSubtitle}"/>
+						</VBox>
+					</HBox>
+
+					<MessageStrip id="loginMessage" text="{login>/message}" type="{login>/messageType}" showIcon="true"
+						visible="{= !!${login>/message}}" class="sapUiSmallMarginBottom"/>
+
+					<VBox visible="{session>/localLogin}">
+						<Label text="{i18n>tenant}" labelFor="tenantInput"/>
+						<Input id="tenantInput" value="{login>/tenant}" placeholder="{i18n>tenantHint}"
+							submit=".onTenantSubmit" autocomplete="false" name="organization"/>
+						<Label text="{i18n>username}" labelFor="userInput" required="true" class="sapUiTinyMarginTop"/>
+						<Input id="userInput" value="{login>/username}" submit=".onUserSubmit"
+							valueState="{login>/userState}" name="username"/>
+						<Label text="{i18n>password}" labelFor="passwordInput" required="true" class="sapUiTinyMarginTop"/>
+						<Input id="passwordInput" type="Password" value="{login>/password}" submit=".onSignIn"
+							valueState="{login>/passwordState}" showValueHelp="true" valueHelpIconSrc="sap-icon://show"
+							valueHelpRequest=".onTogglePassword" name="current-password"/>
+						<CheckBox text="{i18n>rememberTenant}" selected="{login>/remember}" class="sapUiTinyMarginTop"/>
+						<Button text="{i18n>signIn}" type="Emphasized" width="100%" press=".onSignIn"
+							enabled="{= !${login>/busy}}" class="sapUiSmallMarginTop"/>
+					</VBox>
+
+					<VBox visible="{session>/xsuaaLogin}" class="sapUiSmallMarginTop">
+						<Text text="{i18n>ssoHint}" visible="{session>/localLogin}" class="sapUiTinyMarginBottom"/>
+						<Button text="{i18n>signInSso}" icon="sap-icon://visits" width="100%" press=".onSso"/>
+					</VBox>
+
+					<Text text="{i18n>jwtInfo}" class="sapUiSmallMarginTop sapThemeLightText" wrapping="true"/>
+				</VBox>
+			</Panel>
+		</FlexBox>
+	</Page>
+</mvc:View>

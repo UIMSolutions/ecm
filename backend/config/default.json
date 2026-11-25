@@ -1,0 +1,33 @@
+{
+  "server": {
+    "port": 8080,
+    "bind": "0.0.0.0",
+    "corsOrigin": "",
+    "maxUploadMb": 50,
+    "workers": 0,
+    "maxConcurrentLogins": 0,
+    "frontendDir": "",
+    "metricsToken": ""
+  },
+  "storage": {
+    "dataDir": "./data",
+    "journalFlushMs": 200,
+    "indexThreads": 2
+  },
+  "logging": { "level": "info" },
+  "auth": {
+    "mode": "",
+    "issuer": "ecm",
+    "audience": "ecm-api",
+    "tokenTtlMinutes": 480,
+    "leewaySeconds": 30,
+    "autoProvision": true,
+    "defaultTenant": "default"
+  },
+  "bootstrap": {
+    "platformAdminUser": "platform",
+    "adminUser": "admin",
+    "defaultTenant": "default",
+    "defaultTenantName": "Default"
+  }
+}

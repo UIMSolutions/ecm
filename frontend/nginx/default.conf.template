@@ -1,0 +1,22 @@
+server {
+  listen 8080;
+  root /usr/share/nginx/html;
+  index index.html;
+  client_max_body_size 100m;
+
+  location /odata/ {
+    proxy_pass ${BACKEND_URL};
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header Host $proxy_host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_ssl_server_name on;
+    proxy_request_buffering off;   # uploads are streamed straight to the backend
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+  }
+  location = /healthz { default_type text/plain; return 200 'ok'; }
+  location = /index.html { add_header Cache-Control "no-cache"; }
+  location ~* \.(js|css|json|properties|xml)$ { expires 5m; }
+  location / { try_files $uri $uri/ /index.html; }
+}

@@ -1,0 +1,27 @@
+{
+  "xsappname": "ecm",
+  "tenant-mode": "dedicated",
+  "description": "ECM - scopes are mapped to ECM roles by the backend",
+  "scopes": [
+    { "name": "$XSAPPNAME.Viewer", "description": "Read, search and download documents" },
+    { "name": "$XSAPPNAME.Editor", "description": "Create, change, upload, publish and delete documents" },
+    { "name": "$XSAPPNAME.Admin", "description": "Tenant administrator (users, workspaces, members)" },
+    { "name": "$XSAPPNAME.PlatformAdmin", "description": "Platform administrator (tenants)" }
+  ],
+  "role-templates": [
+    { "name": "Viewer", "scope-references": ["$XSAPPNAME.Viewer"] },
+    { "name": "Editor", "scope-references": ["$XSAPPNAME.Viewer", "$XSAPPNAME.Editor"] },
+    { "name": "Admin", "scope-references": ["$XSAPPNAME.Viewer", "$XSAPPNAME.Editor", "$XSAPPNAME.Admin"] },
+    { "name": "PlatformAdmin", "scope-references": ["$XSAPPNAME.PlatformAdmin"] }
+  ],
+  "role-collections": [
+    { "name": "ECM_Viewer", "role-template-references": ["$XSAPPNAME.Viewer"] },
+    { "name": "ECM_Editor", "role-template-references": ["$XSAPPNAME.Editor"] },
+    { "name": "ECM_Admin", "role-template-references": ["$XSAPPNAME.Admin"] },
+    { "name": "ECM_PlatformAdmin", "role-template-references": ["$XSAPPNAME.PlatformAdmin"] }
+  ],
+  "oauth2-configuration": {
+    "token-validity": 3600,
+    "redirect-uris": ["https://*.cfapps.*.hana.ondemand.com/**", "http://localhost:5000/**"]
+  }
+}

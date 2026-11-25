@@ -1,0 +1,67 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "uim.ecm",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": { "version": "2.0.0" },
+    "dataSources": {
+      "mainService": {
+        "uri": "odata/v4/ecm/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0", "localUri": "localService/metadata.xml" }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+  },
+  "sap.ui5": {
+    "rootView": { "viewName": "uim.ecm.view.App", "type": "XML", "id": "app", "async": true },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.ui.core": {}, "sap.m": {}, "sap.f": {}, "sap.ui.layout": {} }
+    },
+    "contentDensities": { "compact": true, "cozy": true },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": { "bundleName": "uim.ecm.i18n.i18n", "supportedLocales": ["", "de"], "fallbackLocale": "" }
+      },
+      "": {
+        "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": false,
+          "groupId": "$direct",
+          "updateGroupId": "$direct"
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "type": "View",
+        "viewType": "XML",
+        "path": "uim.ecm.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true,
+        "bypassed": { "target": "main" }
+      },
+      "routes": [
+        { "pattern": "login:?query:", "name": "login", "target": "login" },
+        { "pattern": "", "name": "main", "target": "main" }
+      ],
+      "targets": {
+        "login": { "id": "login", "name": "Login", "level": 0 },
+        "main": { "id": "main", "name": "Main", "level": 1 }
+      }
+    }
+  }
+}

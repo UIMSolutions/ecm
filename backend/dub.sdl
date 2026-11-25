@@ -1,0 +1,29 @@
+name "ecm-backend"
+description "Multi-tenant Enterprise Content Management - OData v4 backend for SAP Fiori (vibe.d 0.10.5, hexagonal / Clean Architecture, JWT)"
+authors "UI Manufaktur"
+license "Apache-2.0"
+targetType "executable"
+targetName "ecm-backend"
+targetPath "build"
+mainSourceFile "source/app.d"
+sourcePaths "source"
+importPaths "source"
+stringImportPaths "views"
+
+dependency "vibe-d" version="==0.10.5"
+dependency "uim-framework:core" version="==26.11.2"
+
+buildRequirements "silenceDeprecations"
+
+configuration "application" {
+	targetType "executable"
+}
+
+configuration "unittest" {
+	targetType "executable"
+	targetName "ecm-backend-tests"
+	sourcePaths "source" "tests"
+	importPaths "source" "tests"
+	excludedSourceFiles "source/app.d"
+	mainSourceFile "tests/main.d"
+}

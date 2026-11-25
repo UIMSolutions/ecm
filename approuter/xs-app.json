@@ -1,0 +1,33 @@
+{
+  "welcomeFile": "/index.html",
+  "authenticationMethod": "route",
+  "logout": { "logoutEndpoint": "/do/logout", "logoutPage": "/" },
+  "routes": [
+    {
+      "source": "^/healthz$",
+      "target": "/healthz",
+      "destination": "ecm-backend",
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/odata/auth/config$",
+      "target": "/odata/auth/config",
+      "destination": "ecm-backend",
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/odata/(.*)$",
+      "target": "/odata/$1",
+      "destination": "ecm-backend",
+      "authenticationType": "xsuaa",
+      "csrfProtection": true
+    },
+    {
+      "source": "^/(.*)$",
+      "target": "$1",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "cacheControl": "no-cache, no-store, must-revalidate"
+    }
+  ]
+}

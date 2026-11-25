@@ -1,0 +1,101 @@
+<mvc:View controllerName="uim.ecm.controller.Main" height="100%"
+  xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+  <f:DynamicPage fitContent="true" toggleHeaderOnTitleClick="false">
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center">
+            <Title text="{i18n>appTitle}" class="sapUiTinyMarginEnd"/>
+            <ObjectStatus text="{ui>/tenantName}" state="Information" inverted="true"/>
+          </HBox>
+        </f:heading>
+        <f:actions>
+          <Select visible="{= ${ui>/workspaces}.length > 0}" width="14rem" tooltip="{i18n>workspace}"
+                  items="{ui>/workspaces}" selectedKey="{ui>/workspaceId}" change=".onWorkspaceChange">
+            <core:Item key="{ui>ID}" text="{ui>Name}"/>
+          </Select>
+          <Button text="{i18n>newDocument}" icon="sap-icon://add-document" type="Emphasized"
+                  visible="{ui>/canWrite}" press=".onNewDocument"/>
+          <Button icon="sap-icon://role" text="{i18n>members}" visible="{ui>/canManageMembers}" press=".onMembers"/>
+          <Button icon="sap-icon://folder-full" text="{i18n>workspaces}" visible="{ui>/isTenantAdmin}" press=".onWorkspaces"/>
+          <Button icon="sap-icon://building" text="{i18n>tenants}" visible="{ui>/isPlatform}" press=".onTenants"/>
+          <Button icon="sap-icon://group" text="{i18n>users}" visible="{ui>/canAdminUsers}" press=".onUsers"/>
+          <Button icon="sap-icon://refresh" tooltip="{i18n>reindex}" visible="{ui>/canAdminUsers}" press=".onReindex"/>
+          <Button icon="sap-icon://bell" tooltip="{i18n>notifications}" type="Transparent" press=".onNotifications">
+            <customData>
+              <BadgeCustomData key="badge" value="{ui>/unread}" visible="{= ${ui>/unread} > 0}"/>
+            </customData>
+          </Button>
+        </f:actions>
+        <f:navigationActions>
+          <Button icon="sap-icon://sys-help" tooltip="{i18n>help}" type="Transparent" press=".onHelp"/>
+          <Button icon="sap-icon://person-placeholder" id="userMenuButton" text="{ui>/userName}" tooltip="{i18n>userMenu}"
+                  type="Transparent" press=".onUserMenu" ariaHasPopup="Menu"/>
+        </f:navigationActions>
+      </f:DynamicPageTitle>
+    </f:title>
+    <f:content>
+      <VBox height="100%">
+        <MessageStrip text="{i18n>platformInfo}" visible="{ui>/isPlatform}" showIcon="true" class="sapUiSmallMargin"/>
+        <MessageStrip text="{i18n>noWorkspace}" type="Warning" visible="{ui>/noWorkspace}" showIcon="true" class="sapUiSmallMargin"/>
+        <l:Splitter height="100%" visible="{= !${ui>/isPlatform}}">
+          <ScrollContainer height="100%" vertical="true">
+            <layoutData><l:SplitterLayoutData size="280px" resizable="true"/></layoutData>
+            <List id="folderList" mode="SingleSelectMaster" selectionChange=".onFolderSelect"
+                  items="{path: '/Folders', suspended: true, sorter: {path: 'Name'}}" growing="true">
+              <headerToolbar>
+                <OverflowToolbar>
+                  <Title text="{i18n>folders}"/>
+                  <ToolbarSpacer/>
+                  <Button icon="sap-icon://document" tooltip="{i18n>allDocuments}" type="Transparent" press=".onShowAll"/>
+                  <Button icon="sap-icon://add" tooltip="{i18n>newFolder}" type="Transparent"
+                          visible="{ui>/canWrite}" press=".onNewFolder"/>
+                  <Button icon="sap-icon://delete" tooltip="{i18n>deleteFolder}" type="Transparent"
+                          visible="{ui>/canWrite}" press=".onDeleteFolder"/>
+                </OverflowToolbar>
+              </headerToolbar>
+              <StandardListItem title="{Name}" icon="sap-icon://folder-blank"/>
+            </List>
+          </ScrollContainer>
+          <ScrollContainer height="100%" vertical="true">
+            <Table id="docTable" growing="true" growingThreshold="25" noDataText="{i18n>noData}"
+                   items="{path: '/Documents', suspended: true, parameters: {$count: true}, sorter: {path: 'ModifiedAt', descending: true}}">
+              <headerToolbar>
+                <OverflowToolbar>
+                  <SearchField width="26rem" placeholder="{i18n>search}" search=".onSearch"/>
+                </OverflowToolbar>
+              </headerToolbar>
+              <columns>
+                <Column><Text text="{i18n>name}"/></Column>
+                <Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>title}"/></Column>
+                <Column><Text text="{i18n>status}"/></Column>
+                <Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="{i18n>size}"/></Column>
+                <Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>modified}"/></Column>
+                <Column hAlign="End" width="11rem"/>
+              </columns>
+              <items>
+                <ColumnListItem vAlign="Middle">
+                  <VBox>
+                    <Link text="{Name}" press=".onDownload"/>
+                    <Text text="{SearchSnippet}" maxLines="2" class="sapUiTinyMarginTop"
+                          visible="{= !!${SearchSnippet}}"/>
+                  </VBox>
+                  <Text text="{Title}"/>
+                  <ObjectStatus text="{Status}" state="{path: 'Status', formatter: '.formatter.state'}"/>
+                  <Text text="{path: 'Size', formatter: '.formatter.size'}"/>
+                  <Text text="{path: 'ModifiedAt', formatter: '.formatter.date'}"/>
+                  <HBox justifyContent="End" visible="{ui>/canWrite}">
+                    <Button icon="sap-icon://upload" tooltip="{i18n>upload}" type="Transparent" press=".onUpload"/>
+                    <Button icon="sap-icon://accept" tooltip="{i18n>publish}" type="Transparent" press=".onPublish"/>
+                    <Button icon="sap-icon://inbox" tooltip="{i18n>archive}" type="Transparent" press=".onArchive"/>
+                    <Button icon="sap-icon://delete" tooltip="{i18n>delete}" type="Transparent" press=".onDeleteDoc"/>
+                  </HBox>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </ScrollContainer>
+        </l:Splitter>
+      </VBox>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>
